@@ -53,7 +53,7 @@ impl Daybreak {
     #[instrument(skip(self))]
     pub fn checkdate(&self, d: &str) -> bool {
         if let Ok(d) = NaiveDate::parse_from_str(d, "%Y-%m-%d") {
-            let diff = (self.date - d).num_days();
+            let diff = (d - self.date).num_days();
             debug!("{diff} since start");
             return diff >= 0 && self.boolar[diff as usize % self.boolar.len()];
         }
