@@ -4,7 +4,7 @@
     "detail-type": "Scheduled Event",
     "source": "aws.events",
     "account": "123456789012",
-    "time": "2024-11-02T16:04:00Z",
+    "time": "2024-11-10T16:04:00Z",
     "region": "us-east-1",
     "resources": ["arn:aws:events:us-east-1:123456789012:rule/MyRule"],
     "detail": {},
