@@ -3,6 +3,7 @@ use lambda_runtime::{service_fn, tracing, Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
 use spam::Daybreak;
 use tracing::info;
+use tokio::time::{sleep, Duration};
 
 /// This is a made-up example. Requests come into the runtime as unicode
 /// strings in json format, which can map to any structure that implements `serde::Deserialize`
@@ -32,7 +33,11 @@ async fn function_handler(db: &Daybreak, event: LambdaEvent<Request>) -> Result<
     let time = event.payload.time;
 
     let msg = if db.checkdate(&time[..10]) {
-        db.burnice().await;
+        for i in 0..2 {
+            db.burnice().await;
+            info!("call {}", i + 1);
+            sleep(Duration::from_secs(2)).await;
+        }            
         "burnin day"
     } else {
         "No burnin :("
@@ -51,7 +56,7 @@ async fn function_handler(db: &Daybreak, event: LambdaEvent<Request>) -> Result<
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
+        .with_max_level(tracing::Level::DEBUG)
         // disable printing the name of the module in every log line.
         .with_target(false)
         // disabling time is handy because CloudWatch will add the ingestion time.
@@ -61,6 +66,8 @@ async fn main() -> Result<(), Error> {
     let msg = dotenv!("MSG");
     let confstr = include_str!("artifacts/config.txt");
     let token = dotenv!("GTOKEN");
+    //info!("token:'{token}'");
+    //info!("start: {start_date}");
     let db = Daybreak::new(start_date, msg, confstr, token);
     info!("Finished creating Daybreak");
     //println!("{}", db.checkdate("2024.10.28"));
