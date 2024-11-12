@@ -33,7 +33,7 @@ async fn function_handler(db: &Daybreak, event: LambdaEvent<Request>) -> Result<
     let time = event.payload.time;
 
     let msg = if db.checkdate(&time[..10]) {
-        for i in 0..2 {
+        for i in 0..6 {
             db.burnice().await;
             info!("call {}", i + 1);
             sleep(Duration::from_secs(2)).await;
